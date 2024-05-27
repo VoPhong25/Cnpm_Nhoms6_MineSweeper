@@ -6,10 +6,10 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 import model.GameBoard;
 
-public class MinesweeperGamePanel extends JPanel {
+public class MineswepergamePanel extends JPanel {
     private final JButton[][] buttons;
 
-    public MinesweeperGamePanel(GameBoard gameBoard) {
+    public MineswepergamePanel(GameBoard gameBoard) {
         int rows = gameBoard.getRows();
         int cols = gameBoard.getCols();
         this.setLayout(new GridLayout(rows, cols));

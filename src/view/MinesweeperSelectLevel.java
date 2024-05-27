@@ -46,7 +46,7 @@ public class MinesweeperSelectLevel extends JFrame {
         public void actionPerformed(ActionEvent e) {
             GameLevel selectedLevel = MinesweeperSelectLevel.this.getSelectedLevel();
             GameBoard gameBoard = new GameBoard(selectedLevel.getRows(), selectedLevel.getCols(), selectedLevel.getMines());
-            MinesweeperGamePanel gamePanel = new MinesweeperGamePanel(gameBoard);
+            MineswepergamePanel gamePanel = new MineswepergamePanel(gameBoard);
             new MinesweeperController(gamePanel, gameBoard, MinesweeperSelectLevel.this);
             MinesweeperSelectLevel.this.setVisible(false);
         }
