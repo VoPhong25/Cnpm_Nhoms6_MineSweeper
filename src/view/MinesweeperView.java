@@ -1,10 +1,12 @@
+//
+// Source code recreated from a .class file by IntelliJ IDEA
+// (powered by FernFlower decompiler)
+//
+
 package view;
 
+import controller.MinesweeperController;
 
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.Component;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
@@ -13,37 +15,48 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
-
 public class MinesweeperView extends JFrame {
     private JButton startButton;
-
+    private JButton pauseButton; // tam dung tro choi
     public MinesweeperView() {
-        setTitle("Minesweeper");
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(400, 200);
-        setResizable(false);
-        setLocationRelativeTo(null);
+            this.setTitle("Minesweeper");
+            this.setDefaultCloseOperation(3);
+            this.setSize(400, 200);
+            this.setResizable(false);
+            this.setLocationRelativeTo((Component)null);
+            JPanel mainPanel = new JPanel(new FlowLayout());
+            this.startButton = new JButton("Start Game");
+            this.pauseButton = new JButton("Pause");
+            mainPanel.add(this.startButton);
+            mainPanel.add(this.pauseButton);
+            this.add(mainPanel);
 
-        JPanel mainPanel = new JPanel(new FlowLayout());
-
-        startButton = new JButton("Start Game");
-        mainPanel.add(startButton);
-
-        add(mainPanel);
-
-        // Tạo một đối tượng của StartGameListener và gán nó vào nút "Start Game"
-        startButton.addActionListener(new StartGameListener());
-
-        // Hiển thị JFrame
-        setVisible(true);
+        this.startButton.addActionListener(new StartGameListener());
+        this.pauseButton.setVisible(false);
+        this.setVisible(true);
+        MinesweeperSelectLevel selectLevel = new MinesweeperSelectLevel();
+        selectLevel.setParentView(MinesweeperView.this); // Thiết lập MinesweeperView
     }
 
     private class StartGameListener implements ActionListener {
-        @Override
+        private StartGameListener() {
+        }
+
         public void actionPerformed(ActionEvent e) {
-            // Ẩn cửa sổ chính và mở cửa sổ chọn cấp độ
-            setVisible(false);
+            MinesweeperView.this.setVisible(false);
             new MinesweeperSelectLevel();
+
         }
     }
+
+
+    public void setPauseButtonVisible(boolean visible) {
+        pauseButton.setVisible(visible);
+    }
+
+
+
+
+
+
 }
