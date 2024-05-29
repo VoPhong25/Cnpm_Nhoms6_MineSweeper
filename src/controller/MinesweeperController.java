@@ -1,145 +1,174 @@
+//
+// Source code recreated from a .class file by IntelliJ IDEA
+// (powered by FernFlower decompiler)
+//
+
 package controller;
 
-
-import model.GameLevel;
-import model.GameBoard;
-import view.MinesweeperSelectLevel;
-import view.MinesweeperGamePanel;
-
-import javax.swing.*;
+import java.awt.Component;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import javax.swing.*;
 
-public class MinesweeperController {
-    private MinesweeperGamePanel gamePanel;
+import model.GameBoard;
+import view.MinesweeperSelectLevel;
+import view.MineswepergamePanel;
+
+public class MinesweeperController implements GameControlListener {
+    private static MinesweeperController instance;
+    private MineswepergamePanel gamePanel;
     private GameBoard gameBoard;
     private boolean gameOver;
     private MinesweeperSelectLevel view;
+    private JFrame gameFrame;
 
-    public MinesweeperController(MinesweeperGamePanel gamePanel, GameBoard gameBoard, MinesweeperSelectLevel view) {
+
+
+    public MinesweeperController(MineswepergamePanel gamePanel, GameBoard gameBoard, MinesweeperSelectLevel view) {
         this.gamePanel = gamePanel;
         this.gameBoard = gameBoard;
-        this.view = view; // Lưu trữ đối tượng MinesweeperView
+        this.view = view;
         this.gameOver = false;
-        initializeGamePanel();
-        showGameWindow(); // Hiển thị cửa sổ trò chơi sau khi khởi tạo controller
+        this.initializeGamePanel();
+        this.showGameWindow();
+        this.gamePanel.setControlListener(this);
+
+
     }
 
+    // Xử lý sự kiện khi nhấn nút Pause
+
+
+
+
     private void showGameWindow() {
-        JFrame frame = new JFrame("Minesweeper");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.getContentPane().add(gamePanel); // Thêm bảng trò chơi vào content pane của JFrame
-        frame.pack();
-        frame.setLocationRelativeTo(null); // Hiển thị cửa sổ ở giữa màn hình
-        frame.setVisible(true); // Hiển thị cửa sổ
+
+        gameFrame = new JFrame("Minesweeper");
+        gameFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        gameFrame.getContentPane().add(this.gamePanel);
+        gameFrame.pack();
+        gameFrame.setLocationRelativeTo(null);
+        gameFrame.setVisible(true);
     }
 
     private void initializeGamePanel() {
-        JButton[][] buttons = gamePanel.getButtons();
-        for (int i = 0; i < buttons.length; i++) {
-            for (int j = 0; j < buttons[0].length; j++) {
-                JButton button = buttons[i][j];
-                int row = i;
-                int col = j;
+        JButton[][] buttons = this.gamePanel.getButtons();
+        // Xử lý sự kiện cho nút pauseButton
+
+
+        for (int i = 0; i < buttons.length; ++i) {
+            for (int j = 0; j < buttons[0].length; ++j) {
+                final int row = i;
+                final int col = j;
+                final JButton button = buttons[row][col];
                 button.addMouseListener(new MouseListener() {
-                    @Override
                     public void mouseClicked(MouseEvent e) {
-                        if (!gameOver) {
+                        if (!MinesweeperController.this.gameOver) {
                             if (SwingUtilities.isLeftMouseButton(e)) {
-                                revealCell(row, col);
+                                MinesweeperController.this.revealCell(row, col);
                             } else if (SwingUtilities.isRightMouseButton(e)) {
-                                flagCell(button);
+                                MinesweeperController.this.flagCell(button);
                             }
                         }
+
                     }
 
-                    @Override
                     public void mousePressed(MouseEvent e) {
                     }
 
-                    @Override
                     public void mouseReleased(MouseEvent e) {
                     }
 
-                    @Override
                     public void mouseEntered(MouseEvent e) {
                     }
 
-                    @Override
                     public void mouseExited(MouseEvent e) {
                     }
                 });
             }
         }
+
     }
 
     private void revealCell(int row, int col) {
-        if (gameBoard.isMine(row, col)) {
-            // Xử lý khi người chơi nhấp vào ô mìn
-            gamePanel.getButtons()[row][col].setText("M");
-            JOptionPane.showMessageDialog(null, "Game over! You clicked on a mine.");
-            // Hiển thị lại toàn bộ các ô mìn
-            revealAllMines();
-            gameOver = true;
+        if (this.gameBoard.isMine(row, col)) {
+            this.gamePanel.getButtons()[row][col].setText("M");
+            JOptionPane.showMessageDialog((Component)null, "Game over!");
+            this.revealAllMines();
+            this.gameOver = true;
         } else {
-            int count = gameBoard.getCount(row, col);
+            int count = this.gameBoard.getCount(row, col);
             if (count == 0) {
-                // Xử lý khi người chơi nhấp vào ô trống
-                gamePanel.getButtons()[row][col].setEnabled(false);
-                expandEmptyCells(row, col);
+                this.gamePanel.getButtons()[row][col].setEnabled(false);
+                this.expandEmptyCells(row, col);
             } else {
-                // Xử lý khi người chơi nhấp vào ô có số
-                gamePanel.getButtons()[row][col].setText(String.valueOf(count));
+                this.gamePanel.getButtons()[row][col].setText(String.valueOf(count));
             }
         }
+
     }
 
     private void flagCell(JButton button) {
-        // Xử lý cắm cờ ở đây
         if (!button.getText().equals("F")) {
             button.setText("F");
         } else {
             button.setText("");
         }
+
     }
 
     private void expandEmptyCells(int row, int col) {
-        // Xử lý để mở rộng hiển thị các ô trống kề cạnh ô đó
-        for (int r = Math.max(0, row - 1); r <= Math.min(gameBoard.getRows() - 1, row + 1); r++) {
-            for (int c = Math.max(0, col - 1); c <= Math.min(gameBoard.getCols() - 1, col + 1); c++) {
-                if (gameBoard.getCount(r, c) == 0 && gamePanel.getButtons()[r][c].isEnabled()) {
-                    gamePanel.getButtons()[r][c].setEnabled(false);
-                    expandEmptyCells(r, c);
-                } else if (gameBoard.getCount(r, c) != 0) {
-                    gamePanel.getButtons()[r][c].setText(String.valueOf(gameBoard.getCount(r, c)));
+        for(int r = Math.max(0, row - 1); r <= Math.min(this.gameBoard.getRows() - 1, row + 1); ++r) {
+            for(int c = Math.max(0, col - 1); c <= Math.min(this.gameBoard.getCols() - 1, col + 1); ++c) {
+                if (this.gameBoard.getCount(r, c) == 0 && this.gamePanel.getButtons()[r][c].isEnabled()) {
+                    this.gamePanel.getButtons()[r][c].setEnabled(false);
+                    this.expandEmptyCells(r, c);
+                } else if (this.gameBoard.getCount(r, c) != 0) {
+                    this.gamePanel.getButtons()[r][c].setText(String.valueOf(this.gameBoard.getCount(r, c)));
                 }
             }
         }
+
     }
 
     private void revealAllMines() {
-        // Hiển thị lại toàn bộ các ô mìn trên bảng trò chơi
-        for (int i = 0; i < gameBoard.getRows(); i++) {
-            for (int j = 0; j < gameBoard.getCols(); j++) {
-                if (gameBoard.isMine(i, j)) {
-                    gamePanel.getButtons()[i][j].setText("M");
+        for(int i = 0; i < this.gameBoard.getRows(); ++i) {
+            for(int j = 0; j < this.gameBoard.getCols(); ++j) {
+                if (this.gameBoard.isMine(i, j)) {
+                    this.gamePanel.getButtons()[i][j].setText("M");
                 }
             }
         }
+
+    }
+    //---------- start tam dung tro choi
+    public void pauseGame() {
+        // Tạm dừng trò chơi
+        // Hiển thị cửa sổ tùy chọn
+        int choice = JOptionPane.showOptionDialog(null, "Game Paused", "Pause Menu",
+                JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE, null,
+                new String[]{"Resume", "Exit", "Restart"}, "Resume");
+
+        // Xử lý lựa chọn của người chơi
+        switch (choice) {
+            case JOptionPane.YES_OPTION: // Resume
+                // Tiếp tục trò chơi
+                break;
+            case JOptionPane.NO_OPTION: // Exit
+                System.exit(0); // Thoát khỏi chương trình
+                break;
+            case JOptionPane.CANCEL_OPTION: // Restart
+                // Bắt đầu lại trò chơi
+                restartGame();
+                break;
+        }
     }
 
-    // Phương thức để hiển thị cửa sổ chọn cấp độ
-    private void showLevelSelectionDialog(GameLevel selectedLevel) {
-        String message = "You selected " + selectedLevel;
-        JOptionPane.showMessageDialog(view, message);
+    private void restartGame() {
 
-        // Sau khi người dùng chọn cấp độ và bắt đầu trò chơi, bạn có thể tiến hành các bước tiếp theo ở đây.
-        // Ví dụ: Khởi tạo trò chơi với cấp độ tương ứng và hiển thị trò chơi.
-        // Tạo GameBoard dựa trên cấp độ đã chọn
-        GameBoard gameBoard = new GameBoard(selectedLevel.getRows(), selectedLevel.getCols(), selectedLevel.getMines());
-        // Tạo panel trò chơi dựa trên GameBoard
-        MinesweeperGamePanel gamePanel = new MinesweeperGamePanel(gameBoard);
-        // Khởi tạo controller cho trò chơi
-        MinesweeperController gameController = new MinesweeperController(gamePanel, gameBoard, view);
+        gameFrame.dispose(); // Đóng cửa sổ hiện tại
+        view.setVisible(true); // Hiển thị lại cửa sổ chọn level
     }
+    //----------------end tam dung tro choi
 }
