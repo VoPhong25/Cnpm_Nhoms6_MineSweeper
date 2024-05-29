@@ -9,21 +9,25 @@ public enum GameLevel {
     private final int cols;
     private final int mines;
 
-    GameLevel(int rows, int cols, int mines) {
+
+    private GameLevel(int rows, int cols, int mines) {
+
         this.rows = rows;
         this.cols = cols;
         this.mines = mines;
     }
 
     public int getRows() {
-        return rows;
+
+        return this.rows;
     }
 
     public int getCols() {
-        return cols;
+        return this.cols;
     }
 
     public int getMines() {
-        return mines;
+        return this.mines;
+
     }
 }

@@ -1,13 +1,22 @@
 package view;
 
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
 import controller.MinesweeperController;
 import model.GameBoard;
 import model.GameLevel;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+
 
 public class MinesweeperSelectLevel extends JFrame {
     private JComboBox<GameLevel> levelComboBox;
