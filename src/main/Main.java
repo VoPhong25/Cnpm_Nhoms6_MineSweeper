@@ -1,7 +1,8 @@
 package main;
 
-import javax.swing.SwingUtilities;
 import view.MinesweeperView;
+
+import javax.swing.*;
 
 public class Main {
     public Main() {
